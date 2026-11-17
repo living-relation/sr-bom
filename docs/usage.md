@@ -1,9 +1,5 @@
 # Usage
 
-Once the add-in is installed and running in Fusion, use it from the Fusion interface to fill BOM fields and export CSV or Excel files.
-
-The add-in code is not in this repository yet, so the steps below stay at a high level.
-
 ## Before you start
 
 1. Install the add-in as described in [Install](install.md).
@@ -11,14 +7,37 @@ The add-in code is not in this repository yet, so the steps below stay at a high
 
 ## Run
 
-- Which workspace, tab, or panel hosts the command, and the command name itself, are to be completed when the code lands.
-- Which BOM fields are written, how they are chosen, and how existing values are treated are to be completed when the code lands.
-- CSV and Excel export options (file naming, column set, and destination) are to be completed when the code lands.
+Click **SR BOM** on the **SR Tools** tab, or in the Design workspace Add-Ins, Make, or Insert panel. The dialog lists the current assembly.
 
-## Results
+- **BOM style:** Top level (root's direct children, quantity per assembly), Indented (every level, item numbers such as 1, 1.1, 1.1.1), or Parts only (leaf parts, total quantity across the assembly).
+- **Columns:** Choose which columns appear. Item and QTY are counted automatically and are not editable.
+- **build.json:** Optionally fill empty cells from a JSON file. Tick **build.json overwrites filled cells** only if the file should replace values you already typed.
+- **Thumbnails:** Optional pictures of top-level items, shown in the dialog only. They are not written into the CSV or Excel files.
+- **Apply + export** writes Fusion-writable fields back onto the components, then saves the export files in the folder you pick.
 
-What the tool writes, where it writes it, and how to confirm a successful run are to be completed when the code lands.
+## Export files
+
+In the output folder, named after the design (Fusion's ` v12` suffix dropped):
+
+- `<design>_BOM.csv`
+- `<design>_BOM.xlsx`
+- `<design>_BOM_report.txt` — filled cells, anything blocked, and anything still empty
+
+If no design is open, the add-in asks you to open one first.
+
+## build.json
+
+Any of these shapes work. Parts match by component name or part number (not case-sensitive):
+
+```json
+{"parts": [{"name": "Hinge leaf", "part_number": "Hinge-01", "description": "Door hinge leaf",
+            "material": "Aluminum 6061", "vendor": "McMaster", "vendor_pn": "1234A56", "notes": ""}]}
+```
+
+also `{"bom": [...]}`, a plain list, or `{"Hinge leaf": {"pn": "Hinge-01", ...}}`. Accepted aliases: `pn`, `desc`, `mat`, `supplier`, `mcmaster`, `note`.
 
 ## Limits and known issues
 
-Limits, warnings, and known issues are to be completed when the code lands.
+- Linked (external) components cannot be edited here; the report tells you to edit them in their own design.
+- A material must match a library name exactly, or it is reported as blocked.
+- Custom BOM properties are not available on non-commercial Fusion plans, so vendor fields are stored as attributes in the group `srbom`.
