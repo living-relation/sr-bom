@@ -1,30 +1,40 @@
 # SR BOM
 
-A Spark Robotic Fusion add-in that fills BOM fields and exports CSV and Excel.
+A Spark Robotic Fusion add-in that counts components, fills part number, description and material
+from a `build.json` or by hand, writes those fields back, and exports a BOM to CSV and Excel plus a
+report of anything blocked or still empty.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Features
 
-- Fill BOM fields on the active Fusion design.
-- Export BOM data to CSV.
-- Export BOM data to Excel.
-
-The exact BOM fields, export options, and command layout are to be completed when the code lands.
+- **Toolbar button** "SR BOM" in the Design workspace, Solid tab, **Add-Ins** panel (also listed under Utilities > Add-ins).
+- Counts every component (pieces per part) in one of three styles: top level, indented, or parts only.
+- Fills part number, description, material, vendor, vendor part number and notes from a `build.json`.
+- The table can be edited by hand. **Apply + export** writes Fusion-writable fields back onto the components, then saves `<design>_BOM.csv`, `<design>_BOM.xlsx` and `<design>_BOM_report.txt`.
+- Vendor, vendor part number and notes are stored as attributes in the group `srbom` (Fusion custom properties need a commercial plan).
+- Linked (external) components are read-only; the report lists them. A material name must match a library material exactly, or the report lists it as blocked.
 
 ## Requirements
 
 - Autodesk Fusion
-
-Other dependencies, if any, are to be completed when the code lands.
+- No extra Python packages (the Excel export is written with the standard library)
 
 ## Install
 
-Add this repository from Fusion's **Scripts and Add-Ins** dialog. Use the **Add-Ins** tab and add the add-in from a folder. See [docs/install.md](docs/install.md) for the full steps.
+1. Clone this repo and keep the folder on disk.
+2. In Fusion: **Utilities > Add-ins > Scripts and Add-ins > Add-ins tab > + (green plus)**, and pick the `SRBom` folder inside the clone. Tick **Run on Startup** and click **Run**.
+
+   Or copy or link the `SRBom` folder into `%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\` and restart Fusion.
+3. The button shows up in the Add-Ins panel.
+
+Settings (last folder, checked columns, last build.json) are saved in `%APPDATA%\SRBom\`.
+
+See [docs/install.md](docs/install.md) for the full steps, including uninstall.
 
 ## Usage
 
-Once the add-in is installed and running in Fusion, use it from the Fusion interface to fill BOM fields and export CSV or Excel files. Command names, options, and outputs are to be completed when the code lands. See [docs/usage.md](docs/usage.md).
+Open a design, click **SR BOM**, edit or fill the table, then **Apply + export**. See [docs/usage.md](docs/usage.md) for styles, columns, and the `build.json` format.
 
 ## Documentation
 
@@ -34,9 +44,17 @@ Once the add-in is installed and running in Fusion, use it from the Fusion inter
 - [Development](docs/development.md)
 - [Documentation index](docs/README.md)
 
+## Development
+
+```
+python tools/check.py
+```
+
+CI runs the same check. `dev/fusion_smoke.py` is a live test that runs inside Fusion. See [docs/development.md](docs/development.md).
+
 ## Contributing
 
-This repository is just getting started. The add-in code will be added in a later pull request. When you change docs or code, please open a PR against `main`. See [docs/development.md](docs/development.md).
+Work on a branch and open a pull request against `main`. Update `docs/` when behavior changes. See [docs/development.md](docs/development.md) and [AGENTS.md](AGENTS.md).
 
 ## License
 

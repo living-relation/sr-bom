@@ -1,0 +1,11 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "addin",
+  "id": "1a235d0e-a02d-47a6-a28e-1ffe3c244b14",
+  "author": "Spark Robotic",
+  "description": {"": "SR BOM: count parts, fill part number/description/material from build.json or by hand, export CSV and Excel with a report of anything blocked or empty."},
+  "version": "1.0.0",
+  "runOnStartup": true,
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}
