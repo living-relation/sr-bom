@@ -12,7 +12,7 @@
 3. Open the **Add-Ins** tab.
 4. Click the green **+** and pick the `SRBom` folder inside your clone. That folder contains `SRBom.py` and `SRBom.manifest`. Do not pick the repository root.
 5. Select **SR BOM**, tick **Run on Startup**, and click **Run**.
-6. The **SR BOM** button appears on several Design-workspace panels, including a custom SR Tools tab (see below).
+6. The **SR BOM** button appears on several Design-workspace panels, including the **SR Tools** panel on the SOLID tab (see below).
 
 Alternatively, copy or link the `SRBom` folder into `%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\` and restart Fusion. A directory junction works well: updating the clone and restarting the add-in (Stop, then Run) picks up the new files.
 
@@ -24,7 +24,7 @@ The **SR BOM** button is added to several Design-workspace panels, not only the 
 - Utilities / Add-Ins (`SolidScriptsAddinsPanel`)
 - Make (`SolidMakePanel`)
 - Insert (`InsertPanel`)
-- A custom **SR Tools** tab and panel (created if needed)
+- A custom **SR Tools** panel on the SOLID tab (`SRToolsPanel`, created if needed). This is a panel, not a tab.
 
 By default the button is pinned on **SR Tools** and on Add-Ins. The other panels still get the command; Fusion keeps your own pin or unpin choice after the first run.
 
@@ -41,7 +41,7 @@ To change the list, edit `%APPDATA%/SRBom/panels.json`:
 }
 ```
 
-Unknown panel ids are skipped. Restart the add-in (Stop, then Run, or restart Fusion) after you change the file. Stopping the add-in removes every toolbar control for this command, including leftovers from an older panel list. If the SR Tools panel and tab are empty after that, they are removed too.
+Unknown panel ids are skipped. Restart the add-in (Stop, then Run, or restart Fusion) after you change the file. Stopping the add-in removes every toolbar control for this command, including leftovers from an older panel list. If the SR Tools panel is empty after that, it is removed too.
 
 ## Uninstall
 

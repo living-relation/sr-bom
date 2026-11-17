@@ -8,7 +8,7 @@ report of anything blocked or still empty.
 
 ## Features
 
-- **Toolbar button** "SR BOM" on several Design-workspace panels: **SR Tools**, Add-Ins, Make, and Insert. The panel list is configurable in `%APPDATA%/SRBom/panels.json`.
+- **Toolbar button** "SR BOM" on several Design-workspace panels, including the **SR Tools** panel on the SOLID tab, plus Add-Ins, Make, and Insert. The panel list is configurable in `%APPDATA%/SRBom/panels.json`.
 - Counts every component (pieces per part) in one of three styles: top level, indented, or parts only.
 - Fills part number, description, material, vendor, vendor part number and notes from a `build.json`.
 - The table can be edited by hand. **Apply + export** writes Fusion-writable fields back onto the components, then saves `<design>_BOM.csv`, `<design>_BOM.xlsx` and `<design>_BOM_report.txt`.
@@ -26,7 +26,7 @@ report of anything blocked or still empty.
 2. In Fusion: **Utilities > Add-ins > Scripts and Add-ins > Add-ins tab > + (green plus)**, and pick the `SRBom` folder inside the clone. Tick **Run on Startup** and click **Run**.
 
    Or copy or link the `SRBom` folder into `%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\` and restart Fusion.
-3. The button shows up on the **SR Tools** tab and in the Add-Ins, Make, and Insert panels.
+3. The button shows up on the **SR Tools** panel on the SOLID tab, and in the Add-Ins, Make, and Insert panels.
 
 Settings (last folder, checked columns, last build.json) are saved in `%APPDATA%\SRBom\`.
 
