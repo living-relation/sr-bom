@@ -49,7 +49,7 @@ def test_parse_build_json_shapes(data):
     t = bom_core.parse_build_json(data)
     assert t['leg']['part_number'] == 'P-1'
     assert t['p-1']['material'] == 'Aluminum 6061'
-    assert t['leg']['vendor_pn'] == '91290A'
+    assert 'vendor_pn' not in t['leg']  # vendor fields are not part of the BOM any more
 
 
 def test_fill_from_build_respects_overwrite():
@@ -80,9 +80,10 @@ def test_empty_and_report():
 
 def test_csv_and_xlsx(tmp_path):
     rows = [{'name': 'A & <B>', 'qty': 3, 'part_number': 'P1'}]
-    out = list(csv.reader(io.StringIO(bom_core.to_csv(rows, ['name', 'qty', 'part_number']))))
-    assert out[0] == ['QTY', 'Part Number', 'Component'] and out[1] == ['3', 'P1', 'A & <B>']
-    p = bom_core.write_xlsx(str(tmp_path / 'b.xlsx'), rows, columns=['qty', 'name'])
+    rows[0]['description'] = 'A & <B>'
+    out = list(csv.reader(io.StringIO(bom_core.to_csv(rows, ['description', 'qty', 'part_number']))))
+    assert out[0] == ['QTY', 'Part Number', 'Part Description'] and out[1] == ['3', 'P1', 'A & <B>']
+    p = bom_core.write_xlsx(str(tmp_path / 'b.xlsx'), rows, columns=['qty', 'description'])
     with zipfile.ZipFile(p) as z:
         sheet = z.read('xl/worksheets/sheet1.xml').decode()
         assert 'A &amp; &lt;B&gt;' in sheet and '<v>3</v>' in sheet
@@ -134,7 +135,7 @@ def test_column_order_and_no_uom():
     assert bom_core.KEYS[:4] == ['item', 'qty', 'part_number', 'description']
     assert not any('unit' in k or 'uom' in k for k in bom_core.KEYS)
     assert 'item' not in bom_core.EDITABLE and 'qty' not in bom_core.EDITABLE
-    assert bom_core.pick_columns(['notes', 'qty', 'item', 'bogus']) == ['item', 'qty', 'notes']
+    assert bom_core.pick_columns(['material', 'qty', 'item', 'bogus']) == ['item', 'qty', 'material']
     assert bom_core.pick_columns([]) == bom_core.DEFAULT_COLUMNS
 
 
@@ -192,3 +193,28 @@ def test_attr_group_renamed():
     src = open(os.path.join(ADDIN, 'bom_ops.py'), encoding='utf-8').read()
     assert "ATTR_GROUP = 'srbom'" in src
     assert 'handbuiltcad' not in src
+
+
+def test_no_component_vendor_or_notes_columns():
+    """Daniel: the BOM never shows Component, Vendor part number or Notes, so the tool does not offer them."""
+    for k in ('name', 'vendor', 'vendor_pn', 'notes'):
+        assert k not in bom_core.KEYS and k not in bom_core.EDITABLE
+    assert set(bom_core.HEADERS.values()) == {'Item', 'QTY', 'Part Number', 'Part Description', 'Material'}
+    # old saved settings that still list those columns fall back to what is left
+    assert bom_core.pick_columns(['name', 'vendor', 'vendor_pn', 'notes']) == bom_core.DEFAULT_COLUMNS
+    assert bom_core.pick_columns(['name', 'qty']) == ['qty']
+
+
+def test_column_toggle_uses_the_command_inputs():
+    """Column check boxes sit in a group, so args.inputs has no 'bom' table; the handler must use the
+    command's own inputs and _cell must tolerate a missing table (the AttributeError Daniel hit)."""
+    import os
+    src = open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'SRBom', 'SRBom.py'),
+               encoding='utf-8').read()
+    assert 'args.firingEvent.sender.commandInputs' in src
+    assert 'inp, inputs = args.input, _root_inputs(args)' in src
+    cell = src[src.index('def _cell('):src.index('def _root_inputs(')]
+    assert 'if table is None' in cell
+    # the grid is rebuilt in place: a table deleted and re-added while the dialog is open stays hidden
+    build = src[src.index('def _build_table('):src.index('def _read_table(')]
+    assert 'deleteMe' not in build and 'table.deleteRow(0)' in build and 'table.columnRatio = ratio' in build

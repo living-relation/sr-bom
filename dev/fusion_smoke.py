@@ -44,13 +44,13 @@ def main():
         rows = bops.collect_rows(des)
         res['counts'] = {r['name']: r['qty'] for r in rows}
         table = bcore.parse_build_json({'parts': [{'name': 'Plate', 'pn': 'SM-001', 'description': 'plate',
-                                                   'material': 'Aluminum 6061', 'vendor': 'shop'},
+                                                   'material': 'Aluminum 6061'},
                                                   {'name': 'Block', 'pn': 'SM-002', 'material': 'NoSuchMat'}]})
         res['filled'] = bcore.fill_from_build(rows, table)
         blocked = bops.apply_rows(des, rows)
         res['blocked'] = blocked
         back = {r['name']: r for r in bops.collect_rows(des)}
-        res['written_plate'] = {k: back['Plate'][k] for k in ('part_number', 'description', 'material', 'vendor')}
+        res['written_plate'] = {k: back['Plate'][k] for k in ('part_number', 'description', 'material')}
         res['written_block_pn'] = back['Block']['part_number']
         files = bmain.run_exports(out_dir, 'smoke v2', list(back.values()), blocked, res['filled'])
         res['bom_files'] = [os.path.basename(f) for f in files]

@@ -10,9 +10,9 @@ report of anything blocked or still empty.
 
 - **Toolbar button** "SR BOM" on several Design-workspace panels, including the **SR Tools** panel on the SOLID tab, plus Add-Ins, Make, and Insert. The panel list is configurable in `%APPDATA%/SRBom/panels.json`.
 - Counts every component (pieces per part) in one of three styles: top level, indented, or parts only.
-- Fills part number, description, material, vendor, vendor part number and notes from a `build.json`.
+- Fills part number, description and material from a `build.json`.
 - The table can be edited by hand. **Apply + export** writes Fusion-writable fields back onto the components, then saves `<design>_BOM.csv`, `<design>_BOM.xlsx` and `<design>_BOM_report.txt`.
-- Vendor, vendor part number and notes are stored as attributes in the group `srbom` (Fusion custom properties need a commercial plan).
+- BOM columns: Item, QTY, Part Number, Part Description and Material. Component name, vendor, vendor part number and notes are not offered.
 - Linked (external) components are read-only; the report lists them. A material name must match a library material exactly, or the report lists it as blocked.
 
 ## Requirements
