@@ -179,9 +179,14 @@ def test_export_follows_style_and_columns(tmp_path):
 
 
 def test_pin_not_forced_each_start():
-    src = open(os.path.join(ADDIN, 'SRBom.py'), encoding='utf-8').read()
-    assert 'ctl.isPromoted =' not in src and 'isPromotedByDefault' in src
-
+    texts = []
+    for dirpath, _, files in os.walk(ADDIN):
+        for name in files:
+            if name.endswith('.py'):
+                texts.append(open(os.path.join(dirpath, name), encoding='utf-8').read())
+    blob = chr(10).join(texts)
+    assert 'isPromotedByDefault' in blob
+    assert 'isPromoted =' not in blob.replace('isPromotedByDefault', '')
 
 def test_attr_group_renamed():
     src = open(os.path.join(ADDIN, 'bom_ops.py'), encoding='utf-8').read()
