@@ -7,7 +7,7 @@
 
 ## Run
 
-Click **SR BOM** on the **SR Tools** tab, or in the Design workspace Add-Ins, Make, or Insert panel. The dialog lists the current assembly.
+Click **SR BOM** on the **SR Tools** panel (on the SOLID tab), or in the Design workspace Add-Ins, Make, or Insert panel. The dialog lists the current assembly.
 
 - **BOM style:** Top level (root's direct children, quantity per assembly), Indented (every level, item numbers such as 1, 1.1, 1.1.1), or Parts only (leaf parts, total quantity across the assembly).
 - **Columns:** Choose which columns appear. Item and QTY are counted automatically and are not editable.

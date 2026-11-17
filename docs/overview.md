@@ -8,7 +8,7 @@ It is part of the Spark Robotic (SR-) tool set for Fusion.
 
 ## Features
 
-- A toolbar button named **SR BOM** in the Design workspace, Solid tab, SR Tools, Add-Ins, Make, and Insert panels.
+- A toolbar button named **SR BOM** on the **SR Tools** panel on the SOLID tab, and on the Add-Ins, Make, and Insert panels, in the Design workspace.
 - Three BOM styles: top level, indented (layered), or parts only.
 - Editable fields: part number, description, material, vendor, vendor part number, and notes.
 - Part number, description and material are written to the Fusion components.
