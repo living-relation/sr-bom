@@ -6,28 +6,24 @@ import zipfile
 from xml.sax.saxutils import escape
 
 # Column key, header, in BOM order. Item is auto-numbered (1, 2 / 1.1, 1.2) and never editable.
-# Fusion-writable: part_number, description, material (component); vendor/vendor_pn/notes are stored as
-# attributes (group 'srbom') because Fusion custom properties need a Pro/commercial plan.
+# Fusion-writable: part_number, description, material (written to the component).
+# Component name, vendor, vendor part number and notes are never BOM columns (Daniel's rule). The component
+# name is still read so the report can say which component a message is about.
 COLUMNS = [
     ('item', 'Item'),
     ('qty', 'QTY'),
     ('part_number', 'Part Number'),
     ('description', 'Part Description'),
-    ('name', 'Component'),
     ('material', 'Material'),
-    ('vendor', 'Vendor'),
-    ('vendor_pn', 'Vendor part number'),
-    ('notes', 'Notes'),
 ]
 KEYS = [k for k, _ in COLUMNS]
 HEADERS = dict(COLUMNS)
-EDITABLE = ['part_number', 'description', 'material', 'vendor', 'vendor_pn', 'notes']
-ATTR_KEYS = ['vendor', 'vendor_pn', 'notes']
+EDITABLE = ['part_number', 'description', 'material']
 REQUIRED = ['part_number', 'description', 'material']
-DEFAULT_COLUMNS = ['item', 'qty', 'part_number', 'description', 'name', 'material']
+DEFAULT_COLUMNS = ['item', 'qty', 'part_number', 'description', 'material']
 STYLES = [('top', 'Top level'), ('indented', 'Indented (layered)'), ('parts', 'Parts only')]
 DEFAULTS = {'folder': '', 'build_json': '', 'style': 'top', 'columns': DEFAULT_COLUMNS, 'thumbs': False}
-NODE_FIELDS = ['id', 'name', 'part_number', 'description', 'material', 'vendor', 'vendor_pn', 'notes', '_soft']
+NODE_FIELDS = ['id', 'name', 'part_number', 'description', 'material', '_soft']
 
 
 def pick_columns(selected):
@@ -130,9 +126,6 @@ _ALIASES = {
     'part_number': ['part_number', 'pn', 'partnumber', 'part_no', 'number'],
     'description': ['description', 'desc', 'title'],
     'material': ['material', 'mat'],
-    'vendor': ['vendor', 'supplier', 'source'],
-    'vendor_pn': ['vendor_pn', 'vendor_part_number', 'mcmaster', 'mcmaster_pn', 'supplier_pn'],
-    'notes': ['notes', 'note', 'comment'],
     'qty': ['qty', 'quantity', 'count'],
 }
 

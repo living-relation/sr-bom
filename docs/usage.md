@@ -31,13 +31,12 @@ Any of these shapes work. Parts match by component name or part number (not case
 
 ```json
 {"parts": [{"name": "Hinge leaf", "part_number": "Hinge-01", "description": "Door hinge leaf",
-            "material": "Aluminum 6061", "vendor": "McMaster", "vendor_pn": "1234A56", "notes": ""}]}
+            "material": "Aluminum 6061"}]}
 ```
 
-also `{"bom": [...]}`, a plain list, or `{"Hinge leaf": {"pn": "Hinge-01", ...}}`. Accepted aliases: `pn`, `desc`, `mat`, `supplier`, `mcmaster`, `note`.
+also `{"bom": [...]}`, a plain list, or `{"Hinge leaf": {"pn": "Hinge-01", ...}}`. Accepted aliases: `pn`, `desc`, `mat`. Other keys (vendor, notes and the like) are ignored.
 
 ## Limits and known issues
 
 - Linked (external) components cannot be edited here; the report tells you to edit them in their own design.
 - A material must match a library name exactly, or it is reported as blocked.
-- Custom BOM properties are not available on non-commercial Fusion plans, so vendor fields are stored as attributes in the group `srbom`.

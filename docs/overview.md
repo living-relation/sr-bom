@@ -10,9 +10,9 @@ It is part of the Spark Robotic (SR-) tool set for Fusion.
 
 - A toolbar button named **SR BOM** on the **SR Tools** panel on the SOLID tab, and on the Add-Ins, Make, and Insert panels, in the Design workspace.
 - Three BOM styles: top level, indented (layered), or parts only.
-- Editable fields: part number, description, material, vendor, vendor part number, and notes.
+- Columns: Item, QTY, Part Number, Part Description and Material. Component name, vendor, vendor part number and notes are not offered.
+- Editable fields: part number, description and material.
 - Part number, description and material are written to the Fusion components.
-- Vendor, vendor part number and notes are stored as attributes in the group `srbom`, because Fusion custom properties need a commercial plan.
 - Optional thumbnails of top-level items in the dialog.
 - Optional fill from a `build.json`. Filling never replaces what you already typed unless **build.json overwrites filled cells** is ticked. Fusion's own defaults (part number = component name, the design's default material) count as empty.
 

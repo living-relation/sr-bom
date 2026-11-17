@@ -39,9 +39,6 @@ def _fields(comp, root_mat):
         'part_number': comp.partNumber or '',
         'description': comp.description or '',
         'material': comp.material.name if comp.material else '',
-        'vendor': _attr(comp, 'vendor'),
-        'vendor_pn': _attr(comp, 'vendor_pn'),
-        'notes': _attr(comp, 'notes'),
     }
 
 
@@ -157,14 +154,4 @@ def apply_rows(design, rows):
                     comp.material = m
                 except Exception as e:
                     blocked.append((r['name'], 'material', str(e).splitlines()[0]))
-        for k in core.ATTR_KEYS:
-            val = (r.get(k) or '').strip()
-            try:
-                a = comp.attributes.itemByName(ATTR_GROUP, k)
-                if val:
-                    comp.attributes.add(ATTR_GROUP, k, val)
-                elif a:
-                    a.deleteMe()
-            except Exception as e:
-                blocked.append((r['name'], k, str(e).splitlines()[0]))
     return blocked

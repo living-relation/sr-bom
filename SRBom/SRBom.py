@@ -18,6 +18,7 @@ CMD_ID = 'srBomCmd'
 SETTINGS = 'bom'
 _handlers = []
 _state = {'rows': [], 'filled': [], 'tree': [], 'gen': 0}
+_last = {}  # the open command (live tests drive the dialog through it)
 
 
 def _ui():
@@ -25,7 +26,18 @@ def _ui():
 
 
 def _cell(table, r, k):
+    if table is None:
+        return None
     return table.commandInputs.itemById('c%d_%d_%s' % (_state['gen'], r, k))
+
+
+def _root_inputs(args):
+    """The command's top-level inputs. args.inputs is only the changed input's own collection, so for the
+    column check boxes (inside the Columns group) it has no 'bom' table: that was the AttributeError."""
+    try:
+        return args.firingEvent.sender.commandInputs
+    except Exception:
+        return args.inputs
 
 
 def _columns(inputs):
@@ -41,14 +53,18 @@ def _build_table(inputs, rows, cols, thumbs=None):
     """(Re)build the BOM grid. thumbs: {component id: png} shown on top-level rows only (dialog only)."""
     _state['gen'] += 1
     g = _state['gen']
-    old = inputs.itemById('bom')
-    if old:
-        old.deleteMe()
     show = (['thumb'] if thumbs is not None else []) + cols
-    widths = {'thumb': 2, 'item': 1, 'qty': 1, 'part_number': 3, 'description': 4, 'name': 3, 'material': 3,
-              'vendor': 2, 'vendor_pn': 3, 'notes': 3}
-    table = inputs.addTableCommandInput('bom', 'BOM', len(show), ':'.join(str(widths[k]) for k in show))
-    table.maximumVisibleRows = 15
+    widths = {'thumb': 2, 'item': 1, 'qty': 1, 'part_number': 3, 'description': 4, 'material': 3}
+    ratio = ':'.join(str(widths[k]) for k in show)
+    # Rebuild in place. A table deleted and re-added while the dialog is open stays hidden (seen live in
+    # Fusion), so the column check boxes looked like they did nothing.
+    table = inputs.itemById('bom')
+    if table is None:
+        table = inputs.addTableCommandInput('bom', 'BOM', len(widths), ratio)
+        table.maximumVisibleRows = 15
+    while table.rowCount > 0:
+        table.deleteRow(0)
+    table.columnRatio = ratio
     ci = table.commandInputs
     for c, k in enumerate(show):
         head = '' if k == 'thumb' else core.HEADERS[k]
@@ -63,8 +79,8 @@ def _build_table(inputs, rows, cols, thumbs=None):
                 inp = ci.addStringValueInput(iid, '', str(row.get(k, '')))
             else:
                 val = str(row.get(k, ''))
-                if k == 'name' and row.get('level'):
-                    val = '&nbsp;' * 4 * row['level'] + val
+                if k == 'item' and row.get('level'):
+                    val = '&nbsp;' * 2 * row['level'] + val
                 inp = ci.addTextBoxCommandInput(iid, '', val, 1, True)
             table.addCommandInput(inp, r + 1, c)
     return table
@@ -72,6 +88,8 @@ def _build_table(inputs, rows, cols, thumbs=None):
 
 def _read_table(inputs):
     table = inputs.itemById('bom')
+    if table is None:
+        return _state['rows']
     for r, row in enumerate(_state['rows']):
         for k in core.EDITABLE:
             c = _cell(table, r, k)
@@ -82,6 +100,8 @@ def _read_table(inputs):
 
 def _write_table(inputs):
     table = inputs.itemById('bom')
+    if table is None:
+        return
     for r, row in enumerate(_state['rows']):
         for k in core.EDITABLE:
             c = _cell(table, r, k)
@@ -122,6 +142,7 @@ class _Created(adsk.core.CommandCreatedEventHandler):
                 _ui().messageBox('Open a design first.')
                 return
             cmd = args.command
+            _last['cmd'] = cmd
             cmd.setDialogInitialSize(900, 600)
             cmd.okButtonText = 'Apply + export'
             inputs = cmd.commandInputs
@@ -150,8 +171,7 @@ class _Created(adsk.core.CommandCreatedEventHandler):
             inputs.addTextBoxCommandInput('count', 'Part count', '', 1, True)
             _refresh(inputs)
             inputs.addTextBoxCommandInput('note', '', 'Part number, description and material are written to the '
-                                          'components. Vendor, vendor part number and notes are saved as attributes '
-                                          '(custom properties need a commercial Fusion plan).', 2, True)
+                                          'components.', 1, True)
             for h, ev in ((_Changed(), cmd.inputChanged), (_Execute(), cmd.execute)):
                 ev.add(h)
                 _handlers.append(h)
@@ -162,7 +182,7 @@ class _Created(adsk.core.CommandCreatedEventHandler):
 class _Changed(adsk.core.InputChangedEventHandler):
     def notify(self, args):
         try:
-            inp, inputs = args.input, args.inputs
+            inp, inputs = args.input, _root_inputs(args)
             if inp.id == 'style' or inp.id.startswith('col_') or inp.id == 'thumbs':
                 _read_table(inputs)
                 _refresh(inputs, new_rows=inp.id == 'style')
