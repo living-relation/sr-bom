@@ -55,10 +55,14 @@ def main():
         files = bmain.run_exports(out_dir, 'smoke v2', list(back.values()), blocked, res['filled'])
         res['bom_files'] = [os.path.basename(f) for f in files]
         ui = app.userInterface
-        bmain.run(None)
-        res['button_registered'] = bool(ui.commandDefinitions.itemById(bmain.CMD_ID))
-        bmain.stop(None)
-        res['button_removed'] = not ui.commandDefinitions.itemById(bmain.CMD_ID)
+        # Skipped while the installed add-in is running: stop() would delete its shared command and button.
+        if ui.commandDefinitions.itemById(bmain.CMD_ID) is not None:
+            res['button_check'] = 'skipped: the installed SR BOM is running'
+        else:
+            bmain.run(None)
+            res['button_registered'] = bool(ui.commandDefinitions.itemById(bmain.CMD_ID))
+            bmain.stop(None)
+            res['button_removed'] = not ui.commandDefinitions.itemById(bmain.CMD_ID)
     finally:
         doc.close(False)
     res['files'] = sorted(os.listdir(out_dir))
