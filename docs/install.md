@@ -7,17 +7,17 @@
 
 ## Add the add-in in Fusion
 
-1. Open Autodesk Fusion.
-2. Open **Utilities > Add-ins > Scripts and Add-ins** (Shift+S in current builds).
-3. Open the **Add-Ins** tab.
-4. Click the green **+** and pick the `SRBom` folder inside your clone. That folder contains `SRBom.py` and `SRBom.manifest`. Do not pick the repository root.
-5. Select **SR BOM**, tick **Run on Startup**, and click **Run**.
-6. The **SR BOM** button appears on several Design-workspace panels, including the **SR Tools** panel on the SOLID tab (see below).
+The intended install is a directory junction from Fusion's AddIns folder to the `SRBom` folder inside this clone, not a copy. A copied folder will not follow `git pull`. Open a normal Command Prompt (not Run as administrator). `mklink /J` does not need elevation. Both paths below are absolute, so no `cd` is required. Run:
 
-Alternatively, copy or link the `SRBom` folder into `%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\` and restart Fusion. A directory junction works well: updating the clone and restarting the add-in (Stop, then Run) picks up the new files.
+```
+mklink /J "%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\SRBom" "<path-to-this-clone>\SRBom"
+```
+
+Replace `<path-to-this-clone>` with this repo's clone path on that PC. The active-folder path differs per PC.
+
+Then open Autodesk Fusion, press **Shift+S**, open the **Add-Ins** tab, select **SR BOM**, tick **Run on Startup**, and click **Run**. After a later `git pull`, restart the add-in (**Stop**, then **Run**) or restart Fusion. An automatic updater (coming soon, in the workstation repo) will pull updates hourly and notify you to restart Fusion.
 
 If Fusion does not list the add-in, confirm you pointed at `SRBom`, not the repo root. The helper library lives inside that folder (`SRBom/sr_fusion_common/`), so the add-in is self-contained.
-
 
 The **SR BOM** button is added to several Design-workspace panels, not only the Manage or Add-Ins tab:
 
@@ -45,7 +45,7 @@ Unknown panel ids are skipped. Restart the add-in (Stop, then Run, or restart Fu
 
 ## Uninstall
 
-In the same Scripts and Add-Ins dialog, select **SR BOM**, click **Stop**, then remove it from the list if Fusion provides that option. You can also delete a junction or copy under the AddIns folder. Settings in `%APPDATA%\SRBom\` are left in place unless you delete them yourself.
+In the same Scripts and Add-Ins dialog, select **SR BOM**, click **Stop**, then remove it from the list if Fusion provides that option. You can also delete the junction under the AddIns folder. Settings in `%APPDATA%\SRBom\` are left in place unless you delete them yourself.
 
 ## Next
 

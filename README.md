@@ -6,6 +6,22 @@ report of anything blocked or still empty.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## How this add-in is installed
+
+**SR BOM is junctioned straight to the repo clone**, so a `git pull` updates what Fusion loads. Fusion's AddIns entry must be named exactly `SRBom` and must point at the `SRBom` folder inside this repo, not the repo root.
+
+Fusion does not pick up new code until the add-in restarts: restart Fusion, or press **Shift+S**, open **Add-Ins**, and **Stop** then **Run**.
+
+An automatic updater (coming soon, in the workstation repo) will pull updates hourly and notify you to restart Fusion.
+
+To create the junction, open a normal Command Prompt (not Run as administrator). `mklink /J` does not need elevation. Both paths below are absolute, so no `cd` is required. Run:
+
+```
+mklink /J "%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\SRBom" "<path-to-this-clone>\SRBom"
+```
+
+Replace `<path-to-this-clone>` with this repo's clone path on that PC. The active-folder path differs per PC.
+
 ## Features
 
 - **Toolbar button** "SR BOM" on several Design-workspace panels, including the **SR Tools** panel on the SOLID tab, plus Add-Ins, Make, and Insert. The panel list is configurable in `%APPDATA%/SRBom/panels.json`.
@@ -23,10 +39,9 @@ report of anything blocked or still empty.
 ## Install
 
 1. Clone this repo and keep the folder on disk.
-2. In Fusion: **Utilities > Add-ins > Scripts and Add-ins > Add-ins tab > + (green plus)**, and pick the `SRBom` folder inside the clone. Tick **Run on Startup** and click **Run**.
-
-   Or copy or link the `SRBom` folder into `%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\` and restart Fusion.
-3. The button shows up on the default panels listed in [Where the buttons go](#where-the-buttons-go).
+2. Create the AddIns junction as described in [How this add-in is installed](#how-this-add-in-is-installed). Do not copy the folder into AddIns; a copy will not follow `git pull`.
+3. In Fusion, press **Shift+S**, open the **Add-Ins** tab, select **SR BOM**, tick **Run on Startup**, and click **Run**. After a later `git pull`, restart the add-in the same way (**Stop**, then **Run**) or restart Fusion.
+4. The button shows up on the default panels listed in [Where the buttons go](#where-the-buttons-go).
 
 Settings (last folder, checked columns, last build.json) are saved in `%APPDATA%\SRBom\`.
 
